@@ -1,19 +1,19 @@
 script.on_load(function()
     if game.is_multiplayer() then
-        log("Initializing time limit mod")
-        storage['when-to-unban'] = storage['when-to-unban'] or {}
-        storage['player-tick-when-reset'] = storage['player-tick-when-reset'] or {}
-        storage['tick-when-reset'] = storage['tick-when-reset'] or 0
+        log("time-limit mod loading")
+        storage['when-to-unban'] = {}
+        storage['player-tick-when-reset'] = {}
+        storage['tick-when-reset'] = 0
         script.on_nth_tick(60, function()
-            local server_days = math.ceil((game.ticks_played - storage['tick-when-reset']) / (60 * 86400.0))
-            for player in game.connected_players do
+            local server_days = math.ceil((game.ticks_played + 1 - storage['tick-when-reset']) / (60 * 86400.0))
+            for _, player in pairs(game.connected_players) do
                 local player_tick_when_reset = storage['player-tick-when-reset'][player.index] or 0
                 local player_days = (player.online_time - player_tick_when_reset) /
-                    (60 * settings.startup["time-limit-in-seconds"].value)
+                    (60 * settings.startup["time_limit_in_seconds"].value)
                 if player_days > server_days then
                     game:ban_player(player, "time-limit-exceeded")
                     storage['when-to-unban'][player.index] = game.ticks_played +
-                        settings.startup["time-to-ban-in-seconds"].value * 60
+                        settings.startup["time_to_ban_in_seconds"].value * 60
                 end
             end
             for idx, ticks in pairs(storage['when-to-unban']) do
@@ -27,26 +27,26 @@ script.on_load(function()
             storage['when-to-unban'][event.player_index] = nil
         end)
         commands.add_command("reset_time_limit", "Reset the time limit for all players and unban them", function()
-            log("Resetting time limit")
             storage['tick-when-reset'] = game.ticks_played
-            for player in game.players do
+            for _, player in pairs(game.players) do
                 storage['player-tick-when-reset'][player.index] = player.online_time
             end
             for idx, _ in pairs(storage['when-to-unban']) do
                 game:unban_player(idx)
                 storage['when-to-unban'][idx] = nil
             end
+            game.print("Time limit reset for all players.")
         end)
         commands.add_command("debug_time_limit", "Debug the time limit for all players", function()
-            script.print("time-limit-settings:")
-            script.print("time-limit-in-seconds: " .. settings.startup["time-limit-in-seconds"].value)
-            script.print("time-to-ban-in-seconds: " .. settings.startup["time-to-ban-in-seconds"].value)
-            script.print("storage:")
-            script.print("tick-when-reset: " .. storage['tick-when-reset'])
-            script.print("player-tick-when-reset:")
-            script.print(serpent.block(storage['player-tick-when-reset']))
-            script.print("when-to-unban:")
-            script.print(serpent.block(storage['when-to-unban']))
+            game.print("time-limit-settings:")
+            game.print("time_limit_in_seconds: " .. settings.startup["time_limit_in_seconds"].value)
+            game.print("time_to_ban_in_seconds: " .. settings.startup["time_to_ban_in_seconds"].value)
+            game.print("storage:")
+            game.print("tick-when-reset: " .. storage['tick-when-reset'])
+            game.print("player-tick-when-reset:")
+            game.print(serpent.block(storage['player-tick-when-reset']))
+            game.print("when-to-unban:")
+            game.print(serpent.block(storage['when-to-unban']))
         end)
     end
 end)
