@@ -1,0 +1,11 @@
+{
+    "name": "player-time-limit",
+    "version": "0.1.0",
+    "title": "Player Time Limit",
+    "author": "aviboddu",
+    "description": "A mod that limits the time a player can play per day.",
+    "factorio_version": "2.0",
+    "dependencies": [
+        "base"
+    ]
+}
