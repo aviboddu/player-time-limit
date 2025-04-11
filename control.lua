@@ -1,9 +1,9 @@
-script.on_init(function()
+script.on_load(function()
     if game.is_multiplayer() then
         log("Initializing time limit mod")
-        storage['when-to-unban'] = {}
-        storage['player-tick-when-reset'] = {}
-        storage['tick-when-reset'] = 0
+        storage['when-to-unban'] = storage['when-to-unban'] or {}
+        storage['player-tick-when-reset'] = storage['player-tick-when-reset'] or {}
+        storage['tick-when-reset'] = storage['tick-when-reset'] or 0
         script.on_nth_tick(60, function()
             local server_days = math.ceil((game.ticks_played - storage['tick-when-reset']) / (60 * 86400.0))
             for player in game.connected_players do
