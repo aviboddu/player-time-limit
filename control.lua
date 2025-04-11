@@ -1,5 +1,6 @@
 script.on_init(function()
     if game.is_multiplayer() then
+        log("Initializing time limit mod")
         storage['when-to-unban'] = {}
         storage['player-tick-when-reset'] = {}
         storage['tick-when-reset'] = 0
@@ -26,6 +27,7 @@ script.on_init(function()
             storage['when-to-unban'][event.player_index] = nil
         end)
         commands.add_command("reset_time_limit", "Reset the time limit for all players and unban them", function()
+            log("Resetting time limit")
             storage['tick-when-reset'] = game.ticks_played
             for player in game.players do
                 storage['player-tick-when-reset'][player.index] = player.online_time
